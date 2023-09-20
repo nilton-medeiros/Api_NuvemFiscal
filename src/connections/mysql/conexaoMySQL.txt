@@ -1,0 +1,1 @@
+Aqui você coloca sua classe e autenticação com o MySQL ou outro banco
