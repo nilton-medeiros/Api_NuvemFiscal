@@ -20,7 +20,7 @@ method new() class TAuthNuvemFiscal
     ::token := CharXor(RegistryRead(::regPath + "nuvemFiscal\token"), "AccessKeyRegEdit")
     ::expires_in := StoD(RegistryRead(::regPath + "nuvemFiscal\expires_in"))
 
-    if Empty(::expires_in) .or. (::expires_in < Date()+2)
+    if Empty(::expires_in) .or. (::expires_in <= Date())
         // Ainda não tem token ou garante o novo token 2 dias antes de expirar
         ::Authorized := ::getNewToken()
     else
