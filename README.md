@@ -16,6 +16,8 @@ Aqui estão alguns dos principais recursos e funcionalidades da API NuvemFiscal:
 Essas são algumas das características essenciais da API Nuvem Fiscal, que tem como objetivo facilitar e otimizar o processo de autorização de documentos fiscais, tornando-o mais eficiente e confiável para a sua pequena empresa de sistemas.
 
 ### Dependências
+    Compilado com Harbour 3.2.0dev (r1703241902)
+    HMG 3.4.4 Stable (32 bit) HMG-IDE UNICODE ver 1.2a
     saveLog(): função que gera um arquivo de log
     consoleLog(): função para debug, gera um log das ocorrências
 
