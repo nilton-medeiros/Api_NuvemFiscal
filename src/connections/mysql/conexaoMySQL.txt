@@ -1,1 +1,11 @@
 Aqui você coloca sua classe e autenticação com o MySQL ou outro banco
+
+A ideia é que o core da sua aplicação (núcleo) e regras de negócio não dependa do backend (DB), mas
+o banco dependa de uma interface (classe de objetos de uma tabela ou coleção), assim o core só interaja
+com a interface. Isso facilita muito na hora da troca de banco de dados por outro db sem ter que mexer no core.
+
+Exemplo completo de como fica uma aplicação em Harbour estruturada por regra de negócio e não por ordem alfabética
+de código (todos os fontes juntos na raiz do programa), visite:
+
+https://github.com/nilton-medeiros/dfe_monitor-v4   (em Harbour e HMG)
+https://github.com/nilton-medeiros/bitcent          (em NodeJS,NextJS,React e Typescript)
