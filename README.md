@@ -25,8 +25,14 @@ Essas são algumas das características essenciais da API Nuvem Fiscal, que tem 
 Nota: Para saber como usa-las veja os exemplos:
 * example_empresas.prg
 * example_certificado.prg
+* example_cte.prg
 
-As classes ApiCTe.prg e ApiMDFe.prg estão em desenvolvimento, assim que terminar e testar disponibilizo aqui.
+A classe apiCTe.prg foi testada e está emitindo CTe, baixando o DACTE e o XML respectivamente.<br>
+- Faltam os métodos:
+    - Cancelar CTe
+    - Carta de Correção
+
+A classe ApiMDFe.prg está em desenvolvimento, assim que terminar e testar será disponibilizada.
 #### Você pode ajudar colaborando com um código mais limpo, dar sugestões ou comentar os defeitos, mas já comenta com a solução!
 
 ## TMS.Cloud

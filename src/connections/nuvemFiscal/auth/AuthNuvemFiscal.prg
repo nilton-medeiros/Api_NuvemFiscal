@@ -5,22 +5,22 @@
 
 class TAuthNuvemFiscal
 
-    data regPath protected
-    data token readonly
+    data regPath readonly
+    data token
     data expires_in readonly
     data Authorized readonly
 
     method new() constructor
-    method getNewToken() protected
+    method getNewToken()
 
 end class
 
 method new() class TAuthNuvemFiscal
     ::regPath := appData:winRegistryPath
-    ::token := CharXor(RegistryRead(::regPath + "nuvemFiscal\token"), "AccessKeyRegEdit")
+    ::token := CharXor(RegistryRead(::regPath + "nuvemFiscal\token"), "SysWeb2023")
     ::expires_in := StoD(RegistryRead(::regPath + "nuvemFiscal\expires_in"))
-
-    if Empty(::expires_in) .or. (::expires_in <= Date())
+    
+    if Empty(::expires_in) .or. (::expires_in < Date())
         // Ainda não tem token ou garante o novo token 2 dias antes de expirar
         ::Authorized := ::getNewToken()
     else
@@ -92,14 +92,14 @@ method getNewToken() class TAuthNuvemFiscal
 
     response := connection:ResponseBody
     // consoleLog(response)
-    hResp := jsonDecode(response)
+    hResp := hb_jsonDecode(response)
 
     if hb_HGetRef(hResp, "access_token")
         ::token := hResp["access_token"]
         // Converte os segundos em dia (até segunda ordem da nuvem fiscal, é sempre 2592000's, que dá 30 dias)
         ::expires_in := Date() + hResp["expires_in"]/60/60/24
         ::expires_in := ::expires_in -2 // Menos 2 dias para garantir a renovação antes de expirar efetivamente
-        RegistryWrite(::regPath + "nuvemFiscal\token", CharXor(::token, "AccessKeyRegEdit"))
+        RegistryWrite(::regPath + "nuvemFiscal\token", CharXor(::token, "SysWeb2023"))
         RegistryWrite(::regPath + "nuvemFiscal\expires_in", DtoS(::expires_in))
         lAuth := true
     else

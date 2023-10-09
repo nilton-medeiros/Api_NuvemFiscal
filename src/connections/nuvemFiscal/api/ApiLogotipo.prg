@@ -2,7 +2,7 @@
 #include <hbclass.ch>
 
 
-class TApiCertificado
+class TApiLogotipo
 
     data cnpj readonly
     data token
@@ -13,14 +13,14 @@ class TApiCertificado
     data ContentType readonly
 
     method new(cnpj) constructor
-    method Consultar()
-    method Cadastrar(certificado, password)
+    method Baixar()
+    method Enviar(imgLogotipo)
     method Deletar()
 
 end class
 
 
-method new(cnpj) class TApiCertificado
+method new(cnpj) class TApiLogotipo
 
     ::cnpj := cnpj
     ::connected := false
@@ -39,7 +39,7 @@ method new(cnpj) class TApiCertificado
 return self
 
 
-method Consultar() class TApiCertificado
+method Baixar() class TApiLogotipo
     local res, apiUrl
 
     if !::connected
@@ -49,83 +49,88 @@ method Consultar() class TApiCertificado
     // Debug: Integração em teste, remover os comentários do laço if/endif abaixo
     // if empresa:tpAmb == 1
         // API de Produção
-        // apiUrl := "https://api.nuvemfiscal.com.br/empresas/" + ::cnpj + "/certificado"
+        // apiUrl := "https://api.nuvemfiscal.com.br/empresas/" + ::cnpj + "/logotipo"
     // else
         // API de Teste
-        apiUrl := "https://api.sandbox.nuvemfiscal.com.br/empresas/" + ::cnpj + "/certificado"
+        apiUrl := "https://api.sandbox.nuvemfiscal.com.br/empresas/" + ::cnpj + "/logotipo"
     // endif
 
     // Broadcast Parameters: connection, httpMethod, apiUrl, token, operation, body, content_type, accept
-    res := Broadcast(::connection, "GET", apiUrl, ::token, "Consultar Certificado")
+    res := Broadcast(::connection, "GET", apiUrl, ::token, "Baixar Logotipo")
 
     ::httpStatus := res['status']
     ::ContentType := res['ContentType']
     ::response := res['response']
 
     if res['error']
-        saveLog({"Erro ao consultar certificado na api Nuvem Fiscal", hb_eol(), "Http Status: ", res['status'], hb_eol(), "Content-Type: ", res['ContetType'], hb_eol(), "Response: ", res['response']})
+        saveLog({"Erro ao baixar logotipo na api Nuvem Fiscal", hb_eol(), "Http Status: ", res['status'], hb_eol(), "Content-Type: ", res['ContetType'], hb_eol(), "Response: ", res['response']})
     endif
 
 return !res['error']
 
 
-method Cadastrar(certificado, password) class TApiCertificado
-    local res, apiUrl, body
+method Enviar(imgLogotipo, cExt) class TApiLogotipo
+    local res, apiUrl, body, content_type := "image/png"
 
     if !::connected
         return false
     endif
 
+    default cExt := ".png"
+
     // Integração em teste, remover os comentários do laço if/endif abaixo
     // if empresa:tpAmb == 1
         // API de Produção
-        // apiUrl := "https://api.nuvemfiscal.com.br/empresas/" + ::cnpj + "/certificado"
+        // apiUrl := "https://api.nuvemfiscal.com.br/empresas/" + ::cnpj + "/logotipo"
     // else
         // API de Teste
-        apiUrl := "https://api.sandbox.nuvemfiscal.com.br/empresas/" + ::cnpj + "/certificado"
+        apiUrl := "https://api.sandbox.nuvemfiscal.com.br/empresas/" + ::cnpj + "/logotipo"
     // endif
 
     // Request Body
     body := '{' + hb_eol()
-    body += '  "certificado": "' + certificado + '",' + hb_eol()
-    body += '  "password": "' + password + '"' + hb_eol()
+    body += '  "Input": "' + imgLogotipo + '"' + hb_eol()
     body += '}'
 
+    if !(hmg_lower(cExt) == ".png")
+        content_type := "image/jpeg"
+    endif
+
     // Broadcast Parameters: connection, httpMethod, apiUrl, token, operation, body, content_type, accept
-    res := Broadcast(::connection, "PUT", apiUrl, ::token, "Cadastrar Certificado", body, "application/json")
+    res := Broadcast(::connection, "PUT", apiUrl, ::token, "Enviar Logotipo", body, content_type)
 
     ::httpStatus := res['status']
     ::ContentType := res['ContentType']
     ::response := res['response']
 
     if res['error']
-        saveLog({"Erro ao cadastrar certificado na api Nuvem Fiscal", hb_eol(), "Http Status: ", res['status'], hb_eol(),;
+        saveLog({"Erro ao enviar logotipo na api Nuvem Fiscal", hb_eol(), "Http Status: ", res['status'], hb_eol(),;
                  "ContentType: ", res['ContentType'], hb_eol(), "Response: ", res['response']})
     endif
 
 return !res['error']
 
 
-method Deletar() class TApiCertificado
+method Deletar() class TApiLogotipo
     local apiUrl, res
     // Integração em teste, remover os comentários do laço if/endif abaixo
     // if empresa:tpAmb == 1
         // API de Produção
-        // apiUrl := "https://api.nuvemfiscal.com.br/empresas/" + ::cnpj + "/certificado"
+        // apiUrl := "https://api.nuvemfiscal.com.br/empresas/" + ::cnpj + "/logotipo"
     // else
         // API de Teste
-        apiUrl := "https://api.sandbox.nuvemfiscal.com.br/empresas/" + ::cnpj + "/certificado"
+        apiUrl := "https://api.sandbox.nuvemfiscal.com.br/empresas/" + ::cnpj + "/logotipo"
     // endif
 
     // Broadcast Parameters: connection, httpMethod, apiUrl, token, operation, body, content_type, accept
-    res := Broadcast(::connection, "DELETE", apiUrl, ::token, "Deletar Certificado")
+    res := Broadcast(::connection, "DELETE", apiUrl, ::token, "Deletar Logotipo")
 
     ::httpStatus := res['status']
     ::ContentType := res['ContentType']
     ::response := res['response']
 
     if res['error']
-        saveLog({"Erro ao deletar certificado na api Nuvem Fiscal", hb_eol(), "Http Status: ", res['status'], hb_eol(), "Content-Type: ", res['ContetType'], hb_eol(), "Response: ", res['response']})
+        saveLog({"Erro ao deletar logotipo na api Nuvem Fiscal", hb_eol(), "Http Status: ", res['status'], hb_eol(), "Content-Type: ", res['ContetType'], hb_eol(), "Response: ", res['response']})
     endif
 
 return !res['error']
