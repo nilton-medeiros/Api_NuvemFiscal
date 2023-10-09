@@ -6,17 +6,19 @@
 #define false .F.
 
 procedure main()
-    local authNuvemFiscal := TAuthNuvemFiscal():new()
     local apiCTe AS OBJECT, cte AS OBJECT
     local id, hResp, msgRetorno, emitido, startTimer    // Isto é um exemplo
     local aError, error
 
-    if !authNuvemFiscal:Authorized
+    // appNuvemFiscal: var Public utilizado nas apis para autenticação na nuvem fiscal
+    public appNuvemFiscal := TAuthNuvemFiscal():new()
+
+    if !appNuvemFiscal:Authorized
         // QUIT: Mensagem: Falha na Autorização
         RELEASE ALL
     endif
 
-    if Empty(authNuvemFiscal:token)
+    if Empty(appNuvemFiscal:token)
         // QUIT: Mensagem: Token de acesso inválido
         RELEASE ALL
     endif
