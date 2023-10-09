@@ -34,12 +34,12 @@ procedure main()
 
     if recebido
 
-        // CTe foi recebido, verifica se foi autorizado ou rejeitado
+        // CTe foi recebido, verifica se foi autorizado, rejeitado ou se ainda está pendente (aguardando na fila para ser processado)
         emitido := (apiCTe:status == "autorizado")
 
         if !emitido
 
-            // Normalmente a api da Nuvem Fiscal retorna status "pendente" segundo orientação da nv, nos testes (homologação) retornam direto 'autorizado'
+            // Normalmente em produção a api da Nuvem Fiscal retorna status "pendente" segundo orientação da nv, nos testes (homologação) retornaram direto 'autorizado'
             sysWait(2)  // Aguarda 2 segundos para obter autorizado ou erro
 
             recebido := apiCTe:Consultar()
