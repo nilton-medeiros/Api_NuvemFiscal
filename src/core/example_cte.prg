@@ -7,7 +7,7 @@
 
 procedure main()
     local apiCTe AS OBJECT, cte AS OBJECT
-    local id, hResp, msgRetorno, emitido, startTimer    // Isto é um exemplo
+    local id, hResp, msgRetorno, recebido, emitido, startTimer    // Isto é um exemplo
     local aError, error
 
     // appNuvemFiscal: var Public utilizado nas apis para autenticação na nuvem fiscal
@@ -29,24 +29,29 @@ procedure main()
 
     // Emitindo um CTe --------------------------------------------------------------
 
+    recebido := apiCTe:Emitir()
     emitido := false
 
-    if apiCTe:Emitir()
+    if recebido
 
-        if (apiCTe:status == "autorizado")
-            emitido := true
-        else
+        // CTe foi recebido, verifica se foi autorizado ou rejeitado
+        emitido := (apiCTe:status == "autorizado")
+
+        if !emitido
+
+            // Normalmente a api da Nuvem Fiscal retorna status "pendente" segundo orientação da nv, nos testes (homologação) retornam direto 'autorizado'
             sysWait(2)  // Aguarda 2 segundos para obter autorizado ou erro
 
-            emitido := apiCTe:Consultar()
+            recebido := apiCTe:Consultar()
             startTimer := Seconds()
 
-            do while emitido .and. (apiCTe:status == 'pendente') .and. (Seconds() - startTimer < 10)
+            do while recebido .and. (apiCTe:status == 'pendente') .and. (Seconds() - startTimer < 10)
                 // Situação pouco provável, porem não impossível: Insiste obter informações por até 10 segundos
                 sysWait(2)
-                emitido := apiCTe:Consultar()
+                recebido := apiCTe:Consultar()
             enddo
 
+            emitido := (apiCTe:status == "autorizado")
             consoleLog("emitido: " + iif(emitido, "SIM", "NÃO"))  // Debug
 
         endif
@@ -104,24 +109,18 @@ procedure main()
                 saveLog("Arquivo XML do CTe não retornado; CTe Chave: " + apiCTe:chave)
                 cte:setUpdateEventos(apiCTe:numero_protocolo, apiCTe:data_evento, "XML CTE", "Arquivo XML do CTe não foi retornado")
             endif
-
-        else
-            aError := getMessageApiError(apiCTe, false)
-            for each error in aError
-                cte:setUpdateEventos("Erro", date_as_DateTime(date(), false, false), error["code"], error["message"])
-            next
-            cte:setSituacao("ERRO")
-            // Debug
-            consoleLog("apiCte:response" + apiCTe:response + hb_eol() + "API Conectado: " + iif(apiCTe:connected, "SIM", "NÃO"))
         endif
 
-    else
+    endif
+
+    if !emitido
         aError := getMessageApiError(apiCTe, false)
         for each error in aError
             cte:setUpdateEventos("Erro", date_as_DateTime(date(), false, false), error["code"], error["message"])
         next
         cte:setSituacao("ERRO")
-
+        // Debug
+        consoleLog("apiCte:response" + apiCTe:response + hb_eol() + "API Conectado: " + iif(apiCTe:connected, "SIM", "NÃO"))
     endif
 
     cte:setUpdateCte('cte_monitor_action', "EXECUTED")
