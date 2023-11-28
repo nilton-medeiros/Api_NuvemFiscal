@@ -23,16 +23,19 @@ function getMessageApiError(api, lAsText)
 
 	default lAsText := true
 
-	if api:ContentType == "json"
-		consoleLog(api:response)
+	if (api:ContentType == "json")
 		response := hb_jsonDecode(api:response)
-		if hb_HGetRef(response, "errors")
-			response := response["errors"]
-			for each error in response
-				AAdd(aError, error)
-			next
+		if hb_HGetRef(response, "error")
+			response := response["error"]
+			AAdd(aError, {"code" => response["code"], "message" => response["message"]})
+			if hb_HGetRef(response, "errors")
+				response := response["errors"]
+				for each error in response
+					AAdd(aError, error)
+				next
+			endif
 		else
-			AAdd(aError, response["error"])
+			AAdd(aError, {"code" => "sem código", "message" => "Chaves do json desconhecidas, avisar suporte (ver log do sitema)"})
 		endif
 		if lAsText
 			for each error in aError
@@ -40,7 +43,7 @@ function getMessageApiError(api, lAsText)
 					textError += hb_eol()
 				endif
 				textError += "Código: " + error["code"] + hb_eol()
-				textError += "Menssagem: " + error["message"]
+				textError += "Mensagem: " + error["message"]
 			next
 		endif
 	else
@@ -50,6 +53,5 @@ function getMessageApiError(api, lAsText)
 			AAdd(aError, {"code" => "sem código", "message" => api:response})
 		endif
 	endif
-
 
 return iif(lAsText, textError, aError)

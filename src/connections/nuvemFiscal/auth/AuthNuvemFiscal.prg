@@ -19,7 +19,7 @@ method new() class TAuthNuvemFiscal
     ::regPath := appData:winRegistryPath
     ::token := CharXor(RegistryRead(::regPath + "nuvemFiscal\token"), "SysWeb2023")
     ::expires_in := StoD(RegistryRead(::regPath + "nuvemFiscal\expires_in"))
-    
+
     if Empty(::expires_in) .or. (::expires_in < Date())
         // Ainda não tem token ou garante o novo token 2 dias antes de expirar
         ::Authorized := ::getNewToken()
@@ -37,11 +37,12 @@ method getNewToken() class TAuthNuvemFiscal
 	local content_type := "application/x-www-form-urlencoded"
     local client_id := empresa:nuvemfiscal_client_id
     local client_secret := empresa:nuvemfiscal_client_secret
-    local scope := "cte mdfe cnpj empresa cep"
+    local scope := "cte mdfe cnpj empresa cep conta"
     local hResp, objError, msgError, body
 
     begin sequence
-        connection := win_oleCreateObject("MSXML2.ServerXMLHTTP.6.0")
+        connection := win_oleCreateObject("MSXML2.ServerXMLHTTP.6.0")   // usa msxml6.dll (esta funciona em Win10/11)
+        // connection := win_oleCreateObject("Microsoft.XMLHTTP")       // Usa msxml3.dll (não funciona Win7/10/11)
         if Empty(connection)
             saveLog("Erro na criação do serviço: MSXML2")
             // consoleLog({'win_oleCreateObject("MSXML2.ServerXMLHTTP.6.0") retornou type: ', ValType(connection), hb_eol()})
@@ -74,12 +75,12 @@ method getNewToken() class TAuthNuvemFiscal
 
     recover using objError
         msgError := MsgDebug(connection)
-        if objError:genCode != 0
-            // consoleLog({"Erro de conexão com o site", hb_eol(), "Error: ", objError:description, hb_eol(), msgError, hb_eol()})
-            saveLog({"Erro de conexão com o site", hb_eol(), "Error: ", objError:description, hb_eol()})
-        else
+        if (objError:genCode == 0)
             // consoleLog({"Erro de conexão com o site", hb_eol(), hb_eol(), msgError, hb_eol()})
             saveLog({"Erro de conexão com o site", hb_eol(), hb_eol()})
+        else
+            // consoleLog({"Erro de conexão com o site", hb_eol(), "Error: ", objError:description, hb_eol(), msgError, hb_eol()})
+            saveLog({"Erro de conexão com o site", hb_eol(), "Error: ", objError:description, hb_eol()})
         endif
         saveLog({"Erro de conexão com o site", hb_eol(), msgError, hb_eol()})
         lError := true

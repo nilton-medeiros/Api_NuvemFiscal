@@ -19,7 +19,11 @@ Essas são algumas das características essenciais da API Nuvem Fiscal, que tem 
     Compilado com Harbour 3.2.0dev (r1703241902)
     HMG 3.4.4 Stable (32 bit) HMG-IDE UNICODE ver 1.2a
     saveLog(): função que gera um arquivo de log
-    consoleLog(): função para debug, gera um log das ocorrências
+    consoleLog(): função para debug, gera um log das ocorrências e response's da api
+    Windows 10 ou 11 por causa da dll msxml6.dll (MSXML2.ServerXMLHTTP.6.0)
+**Nota:**
+O harbour não roda a dll msxml6.dll ou msxml3.dll no Windows 7, causa:
+"Error WINOLE/1007 Erro no suporte a canais seguros..."
 
 #
 Nota: Para saber como usa-las veja os exemplos:
@@ -27,12 +31,28 @@ Nota: Para saber como usa-las veja os exemplos:
 * example_certificado.prg
 * example_cte.prg
 
-A classe apiCTe.prg foi testada e está emitindo CTe, baixando o DACTE e o XML respectivamente.<br>
-- Faltam os métodos:
-    - Cancelar CTe
+A classe apiCTe.prg foi testada e está em produção nos métodos abaixo:<br>
+- Emitir
+- Cancelar
+- Consultar CTe
+- Consultar status do Serviço na SEFAZ
+- Baixar PDF do DACTE autorizado e cancelado
+- Baixar XML do CTE autorizado e cancelado
+- Falta o método:
     - Carta de Correção
 
-A classe ApiMDFe.prg está em desenvolvimento, assim que terminar e testar será disponibilizada.
+A classe ApiMDFe.prg foi testada e está em produção nos métodos abaixo:
+- Emitir
+- Cancelar
+- Consultar MDFe não encerrados
+- Encerrar
+- Consultar status do Serviço na SVRS
+- Baixar PDF do DAMDFE autorizado, cancelado e encerrado
+- Baixar XML do MDFe autorizado, cancelado e encerrado
+- Falta o método:
+    - Sincronizar dados no MDF-e a partir da SEFAZ
+
+
 #### Você pode ajudar colaborando com um código mais limpo, dar sugestões ou comentar os defeitos, mas já comenta com a solução!
 
 ## TMS.Cloud
