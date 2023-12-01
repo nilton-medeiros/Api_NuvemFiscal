@@ -24,6 +24,7 @@ Essas são algumas das características essenciais da API Nuvem Fiscal, que tem 
 **Nota:**
 O harbour não roda a dll msxml6.dll ou msxml3.dll no Windows 7, causa:
 "Error WINOLE/1007 Erro no suporte a canais seguros..."
+Versões anteriores como Windows 7 foi descontinuado atualizações de segurança, foi tentando todo tipo de instalação manual, nenhuma funcionou.
 
 #
 Nota: Para saber como usa-las veja os exemplos:
